@@ -1,0 +1,22 @@
+digraph G {
+  rankdir=TB; newrank=true; fontname="Noto Sans CJK TC"; bgcolor="white";
+  node [fontname="Noto Sans CJK TC", fontsize=13, style="filled,rounded", shape=box, color="#1f2a37", fillcolor="#fffdf8"];
+  edge [fontname="Noto Sans CJK TC", fontsize=11, color="#1f2a37"];
+  subgraph cluster_w { label="階段一：建 LLM Wiki（loop）"; style="rounded,dashed"; color="#0f766e"; fontcolor="#0f766e";
+    I [label="需求訪談\n10 題 → 人確認"]; R [label="讀資料\nraw/ 擷取筆記"]; C [label="證據卡\n＋概念／建議／爭議頁"];
+    L [label="lint 腳本\n(a)–(e)", shape=diamond, fillcolor="#ccfbf1"]; F [label="AI 審查(f)(g)\n新對話・最多 3 輪", shape=diamond, fillcolor="#ccfbf1"];
+    I -> R -> C -> L; L -> F [label="全過"]; L -> C [label="✗ 修", color="#c2410c", fontcolor="#c2410c"]; F -> C [label="✗ 只改卡片原意", color="#c2410c", fontcolor="#c2410c"];
+  }
+  subgraph cluster_s { label="階段二：產生簡報（graph）"; style="rounded,dashed"; color="#c2410c"; fontcolor="#c2410c";
+    N1 [label="N1 檢索 wiki\n→ 證據包"]; G1 [label="G1 覆蓋率", shape=diamond, fillcolor="#ffedd5"]; N2 [label="N2 大綱"]; H [label="人確認", shape=ellipse, fillcolor="#e0e7ff"];
+    N3 [label="N3 逐頁稿\n（小 loop ≤2 輪：\n出處＋數字比對）"]; G2 [label="G2 忠實度\nAI 審查 ≤3 輪", shape=diamond, fillcolor="#ffedd5"];
+    N4 [label="N4 渲染 HTML\n（不准改字）"]; G3 [label="G3 渲染檢查\n溢出・測驗・改字", shape=diamond, fillcolor="#ffedd5"]; D [label="交件\ndeck.html＋report.md", shape=ellipse, fillcolor="#1f2a37", fontcolor="white"];
+    N1 -> G1 -> N2 -> H -> N3 -> G2 -> N4 -> G3 -> D;
+    G1 -> N1 [label="缺 A 級卡\n<3 篇就停", color="#c2410c", fontcolor="#c2410c"];
+    G2 -> N3 [label="只退回出錯那頁", color="#c2410c", fontcolor="#c2410c"];
+    G2 -> N1 [label="證據包沒這張卡", color="#c2410c", fontcolor="#c2410c", style=dashed];
+    G3 -> N3 [label="文字溢出", color="#c2410c", fontcolor="#c2410c"];
+    G3 -> N4 [label="排版 bug", color="#c2410c", fontcolor="#c2410c", style=dashed];
+  }
+  F -> N1 [label="Wiki 完成", style=bold];
+}

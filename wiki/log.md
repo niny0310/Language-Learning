@@ -1,0 +1,22 @@
+# 操作紀錄（只新增）
+
+- 2026-11-15 建立 Wiki：完成 10 題需求訪談，使用者確認需求摘要後產生 AGENTS.md 與資料夾。
+- 2026-11-15 ingest #1 dunlosky2013（A 級，部分全文）：新增 1 個來源頁、7 條證據、3 個概念頁。
+  - ⚠ 規則測試發現：新頁面忘了登記 index.md，但 lint 仍顯示全過。原因是孤兒頁檢查只看「有沒有被連到」，頁面互連就漏掉。
+  - 修正：lint (b) 改為同時要求「登記在 index.md」。重跑後抓到 5 頁未登記，補登後全過。
+- 2026-11-15 ingest #2 karpicke2008（A 級，全文）：新增 5 條證據，更新 [[concepts/retrieval-practice]]。
+  - lint 第一次跑抓到 2 頁未登記 index（第 1 篇修好的規則生效）；補登後全過。
+  - 規則測試結論：證據卡格式、1 句原文規則都可行，之後改為批次 ingest。
+- 2026-11-15 批次 ingest #3–#12：soderstrom2016、kimwebb2022、settles2016、webb2023、leireynolds2022、krashen1982、nguyen2025、peker2020（A）、aps2016（B）、clozemaster2026（C）。
+  - 讀取受限：shell 無法下載論文，改用網頁讀取工具；kimwebb2022 只讀到摘要，已在 sources 標示。
+  - lint：30 頁未登記 index → 新增 tools/build_index.py 自動產生 index（規則修改，見 AGENTS.md 第 8 節）。
+  - 發現兩組事實矛盾：karpicke2008 vs soderstrom2016（再讀有沒有用）、leireynolds2022 vs kimwebb2022（集中 vs 分散）。
+- 2026-11-15 lint (f) AI 審查（另開新 agent，只給 cards/debates/concepts）
+  - 第 1 輪 不通過：3 個矛盾未依規則處理＋5 個誤導說法 → 修正、新增 [[debates/why-testing-works]]。
+  - 第 2 輪 不通過：主要是「概念頁說法比證據卡更強」（如「無法直接教」被寫成「不用直接教」）共 8 處 → 逐句改回卡片原意。
+  - 自查 advice/：同類問題 1 處（引用的卡片沒有「分散」資訊）→ 補卡 webb2023-6。
+  - 結論：最常出錯的節點是「證據卡 → 白話改寫」。
+  - 第 3 輪 不通過：剩 6 處引用支持問題（如把理論觀點寫成「能確定」）。
+  - 🛑 已達「最多 3 輪」上限 → 停止 AI 審查迴圈；依第 3 輪報告人工修正 6 處，未再送 AI 審查（下次由人工抽查）。
+  - lint (d) 在修正後抓到：對照頁某列數字只剩 C 級。檢討後改規則：C 級在對照頁允許、其他頁一律禁止；數字只有 B 級也報錯。AGENTS.md 第 8、9 節同步更新（新增 g 項：引用句不得比證據卡更強）。
+- 2026-11-15 簡報 G2 第 3 輪後，第 11 頁要改引 kimwebb2022-2，但它不在證據包 → 依 graph 退回 N1：在 [[advice/vocab-review-routine]] 補引用，lint 通過後重新檢索。
